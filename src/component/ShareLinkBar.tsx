@@ -1,26 +1,41 @@
 'use client';
 
 import { useRef } from "react";
-import { Copy, Share2 } from "lucide-react";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
 
-export default function ShareLinkBar({ sessionId }: { sessionId: string | null }) {
+export default function ShareLinkBar({
+  sessionId,
+}: {
+  sessionId: string | null;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const origin = process.env.NEXT_PUBLIC_FRONTEND_ORIGIN || (typeof window !== 'undefined' ? window.location.origin : '');
-  const url = new URL(origin + '/chat');
-  if (sessionId) url.searchParams.set('session_id', sessionId);
+  const origin =
+    process.env.NEXT_PUBLIC_FRONTEND_ORIGIN ||
+    (typeof window !== "undefined" ? window.location.origin : "");
+  const url = new URL(origin + "/chat");
+  if (sessionId) url.searchParams.set("session_id", sessionId);
   const shareUrl = url.toString();
 
+  const handleCopy = async () => {
+    const inputEl = inputRef.current;
+    if (!inputEl) {
+      toast.error("Input field not found.");
+      return;
+    }
 
-  const handleCopy = () => {
-    if (inputRef.current) {
-      navigator.clipboard.writeText(inputRef.current.value)
-        .then(() => {
-          console.log("Copied!");
-        })
-        .catch((err) => {
-          console.error("Failed to copy:", err);
-        });
+    if (!navigator.clipboard || !window.isSecureContext) {
+      // toast.error("Clipboard not available in this environment.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(inputEl.value);
+      toast.success("Link copied to clipboard");
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+      toast.error("Failed to copy link");
     }
   };
 
@@ -42,13 +57,6 @@ export default function ShareLinkBar({ sessionId }: { sessionId: string | null }
         >
           <Copy className="w-4 h-4 text-white group-hover:text-gray-400 transition" />
         </button>
-
-        {/* <button
-          type="button"
-          className="group text-sm text-white rounded-md px-3 py-1.5 cursor-pointer transition"
-        >
-          <Share2 className="w-4 h-4 text-white group-hover:text-gray-400 transition" />
-        </button> */}
       </div>
     </div>
   );

@@ -37,36 +37,39 @@ export default function UploadPage() {
     const formData = new FormData();
     const sessionId = uuidv4();
 
-    const notes = (document.getElementById('notes') as HTMLInputElement).files?.[0];
-    const questions = (document.getElementById('questions') as HTMLInputElement).files?.[0];
-    const answers = (document.getElementById('answers') as HTMLInputElement).files?.[0];
+    const notes = (document.getElementById("notes") as HTMLInputElement)
+      .files?.[0];
+    const questions = (document.getElementById("questions") as HTMLInputElement)
+      .files?.[0];
+    const answers = (document.getElementById("answers") as HTMLInputElement)
+      .files?.[0];
 
-    if (!notes || !questions || !answers) {
-      toast.error('Please upload documents');
+    if (!notes || !questions) {
+      toast.error("Please upload documents");
       setIsLoading(false);
       return;
     }
 
-    formData.append('notes', notes);
-    formData.append('questions', questions);
+    formData.append("notes", notes);
+    formData.append("questions", questions);
     if (answers) {
-      formData.append('answers', answers);
+      formData.append("answers", answers);
     }
 
     try {
       const res = await fetch(`${baseUrl}/upload/${sessionId}`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
       const result = await res.json();
-      if (result.status === 'success') {
+      if (result.status === "success") {
         const chatRes = await fetch(`${baseUrl}/chat/${sessionId}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             user_id: userId,
-            user_answer: '[START_SESSION]',
+            user_answer: "[START_SESSION]",
             question_index: 0,
           }),
         });
@@ -74,16 +77,17 @@ export default function UploadPage() {
         if (chatRes.ok) {
           const chatData = await chatRes.json();
           if (chatData.index !== undefined && chatData.question) {
-            router.push(`/share?session_id=${sessionId}&user_id=${userId}`);
+            router.replace(`/share?session_id=${sessionId}&user_id=${userId}`);
+            return;
           } else {
-            toast.error('Invalid session response.');
+            toast.error("Invalid session response.");
           }
         } else {
-          toast.error('Failed to prepare your session.');
+          toast.error("Failed to prepare your session.");
         }
       }
     } catch (err) {
-      toast.error('Backend error. Check connection.');
+      toast.error("Backend error. Check connection.");
     } finally {
       setIsLoading(false);
     }
@@ -113,12 +117,14 @@ export default function UploadPage() {
           <span className="block mb-1">Upload Notes</span>
           <label
             className={`flex items-center justify-between border ${
-              notesUploaded ? 'border-green-500' : 'border-gray-700'
+              notesUploaded ? "border-green-500" : "border-gray-700"
             } rounded-md bg-gray-800 px-4 py-3 cursor-pointer`}
           >
             <div className="flex items-center space-x-2">
               <UploadCloudIcon className="text-blue-200 w-5 h-5" />
-              <span className="text-gray-300 text-sm">{notesFile || 'Upload'}</span>
+              <span className="text-gray-300 text-sm">
+                {notesFile || "Upload"}
+              </span>
             </div>
             <input
               type="file"
@@ -127,7 +133,7 @@ export default function UploadPage() {
               id="notes"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                setNotesFile(file?.name || '');
+                setNotesFile(file?.name || "");
                 setNotesUploaded(!!file);
               }}
             />
@@ -139,12 +145,14 @@ export default function UploadPage() {
           <span className="block mb-1">Upload Questions</span>
           <label
             className={`flex items-center justify-between border ${
-              questionsUploaded ? 'border-green-500' : 'border-gray-700'
+              questionsUploaded ? "border-green-500" : "border-gray-700"
             } rounded-md bg-gray-800 px-4 py-3 cursor-pointer`}
           >
             <div className="flex items-center space-x-2">
               <UploadCloudIcon className="text-blue-200 w-5 h-5" />
-              <span className="text-gray-300 text-sm">{questionsFile || 'Upload'}</span>
+              <span className="text-gray-300 text-sm">
+                {questionsFile || "Upload"}
+              </span>
             </div>
             <input
               type="file"
@@ -153,7 +161,7 @@ export default function UploadPage() {
               id="questions"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                setQuestionsFile(file?.name || '');
+                setQuestionsFile(file?.name || "");
                 setQuestionsUploaded(!!file);
               }}
             />
@@ -162,15 +170,20 @@ export default function UploadPage() {
 
         {/* Answers */}
         <div className="mb-2">
-          <span className="block mb-1">Upload Answers</span>
+          <span className="block mb-1">
+            Upload Answers{" "}
+            <span className="text-xs text-gray-400">(Optional)</span>
+          </span>
           <label
             className={`flex items-center justify-between border ${
-              answersUploaded ? 'border-green-500' : 'border-gray-700'
+              answersUploaded ? "border-green-500" : "border-gray-700"
             } rounded-md bg-gray-800 px-4 py-3 cursor-pointer`}
           >
             <div className="flex items-center space-x-2">
               <UploadCloudIcon className="text-blue-200 w-5 h-5" />
-              <span className="text-gray-300 text-sm">{answersFile || 'Upload'}</span>
+              <span className="text-gray-300 text-sm">
+                {answersFile || "Upload"}
+              </span>
             </div>
             <input
               type="file"
@@ -179,7 +192,7 @@ export default function UploadPage() {
               id="answers"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                setAnswersFile(file?.name || '');
+                setAnswersFile(file?.name || "");
                 setAnswersUploaded(!!file);
               }}
             />
@@ -191,7 +204,7 @@ export default function UploadPage() {
           <button
             type="button"
             className="border border-white px-6 rounded cursor-pointer transition duration-300 hover:border-gray-400 hover:text-gray-400"
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
           >
             Back
           </button>
