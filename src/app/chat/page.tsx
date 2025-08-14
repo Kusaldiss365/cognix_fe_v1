@@ -281,17 +281,17 @@ export default function ChatPage() {
     }
   };
 
-  useEffect(() => {
-    const navEntry = performance.getEntriesByType(
-      "navigation"
-    )[0] as PerformanceNavigationTiming;
+  // useEffect(() => {
+  //   const navEntry = performance.getEntriesByType(
+  //     "navigation"
+  //   )[0] as PerformanceNavigationTiming;
 
-    if (navEntry?.type === "reload") {
-      sessionStorage.clear();
-      localStorage.clear();
-      router.replace("/");
-    }
-  }, []);
+  //   if (navEntry?.type === "reload") {
+  //     sessionStorage.clear();
+  //     localStorage.clear();
+  //     router.replace("/");
+  //   }
+  // }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-white p-6">
