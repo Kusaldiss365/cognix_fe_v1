@@ -192,15 +192,15 @@ export default function ChatPage() {
     }
   };
 
-  useEffect(() => {
-    if (chatComplete) {
-      const timer = setTimeout(() => {
-        router.push("/");
-      }, 30000);
+  // useEffect(() => {
+  //   if (chatComplete) {
+  //     const timer = setTimeout(() => {
+  //       router.push("/");
+  //     }, 30000);
 
-      return () => clearTimeout(timer);
-    }
-  }, [chatComplete]);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [chatComplete]);
 
   const handleNextQuestion = async () => {
     try {
